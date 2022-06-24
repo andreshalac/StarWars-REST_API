@@ -9,6 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
+import json
 #from models import Person
 
 app = Flask(__name__)
@@ -19,6 +20,8 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+user=[]
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -33,11 +36,41 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def handle_hello():
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    users = jsonify(user)
+    return users
+    # response_body = {
+    #     "msg": "Hello, this is your GET /user response "
+    # }
 
-    return jsonify(response_body), 200
+    # return jsonify(response_body), 200
+
+@app.route('/user', methods=['POST'])
+def add_new_user():
+
+    request_body =  json.loads(request.data)
+    user.append(request_body)
+    user_json = jsonify(user)
+
+    return user_json
+
+@app.route('/user/<int:position>', methods=['DELETE'])
+def delete_todo(position):
+
+    def delete(todo):
+        user= []
+
+    return jsonify(user)
+    # def delete(todo):
+
+    #     if todos.index(todo) != position:
+    #         return todos[todos.index(todo)]
+
+    # newTodos = list(filter(delete, todos))
+    # newTodos = jsonify(newTodos)
+    
+    # print(newTodos)
+
+    # return newTodos
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
