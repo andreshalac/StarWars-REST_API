@@ -12,11 +12,12 @@ class User (db.Model):
     favoritos = db.relationship('Favs', backref='user', lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.id
 
     def serialize(self):
         return {
             "id": self.id,
+            "name": self.name,
             "email": self.email,
             "favoritos": self.favoritos
         }
@@ -33,7 +34,7 @@ class Characters (db.Model):
     favoritos = db.relationship('Favs', backref='characters', lazy=True)
 
     def __repr__(self):
-        return '<Characters %r>' % self.characters
+        return '<Characters %r>' % self.id
 
     def serialize(self):
         return {
@@ -56,14 +57,14 @@ class Planets(db.Model):
     name = db.Column(db.String(250))
     population = db.Column(db.String(250))
     terrain = db.Column(db.String(250), nullable=False)
-    climate = db.Column(db.Integer)
-    orbitalPeriod = db.Column(db.Integer)
-    rotationPeriod = db.Column(db.Integer)
-    diameter = db.Column(db.Integer)
+    climate = db.Column(db.String(100))
+    orbitalPeriod = db.Column(db.String(100))
+    rotationPeriod = db.Column(db.String(100))
+    diameter = db.Column(db.String(100))
     favoritos = db.relationship('Favs', backref='planets', lazy=True)
 
     def __repr__(self):
-        return '<Planets %r>' % self.planets
+        return '<Planets %r>' % self.id
 
     def serialize(self):
         return {
@@ -90,7 +91,7 @@ class Favs(db.Model):
         return {}
 
     def __repr__(self):
-        return '<Favs %r>' % self.favs
+        return '<Favs %r>' % self.id
 
     def serialize(self):
         return {
