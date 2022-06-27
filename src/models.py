@@ -9,7 +9,9 @@ class User (db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    favoritos = db.relationship('Favs', backref='user', lazy=True)
+    # favoritos = db.relationship('Favs', backref='User', lazy=True)
+    favsPlanets = db.relationship('FavsPlanets', backref='User', lazy=True)
+    favsCharacters = db.relationship('FavsCharacters', backref='User', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.id
@@ -19,7 +21,7 @@ class User (db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            "favoritos": self.favoritos
+            # "favoritos": self.favoritos
         }
 
 
@@ -31,7 +33,8 @@ class Characters (db.Model):
     hairColor = db.Column(db.String(50))
     height = db.Column(db.Integer)
     skinColor = db.Column(db.String(50), nullable=False)
-    favoritos = db.relationship('Favs', backref='characters', lazy=True)
+    # favoritos = db.relationship('Favs', backref='characters', lazy=True)
+    favsCharacters = db.relationship('FavsCharacters', backref='characters', lazy=True)
 
     def __repr__(self):
         return '<Characters %r>' % self.id
@@ -61,7 +64,8 @@ class Planets(db.Model):
     orbitalPeriod = db.Column(db.String(100))
     rotationPeriod = db.Column(db.String(100))
     diameter = db.Column(db.String(100))
-    favoritos = db.relationship('Favs', backref='planets', lazy=True)
+    # favoritos = db.relationship('Favs', backref='planets', lazy=True)
+    favsPlanets = db.relationship('FavsPlanets', backref='Planets', lazy=True)
 
     def __repr__(self):
         return '<Planets %r>' % self.id
@@ -80,23 +84,60 @@ class Planets(db.Model):
         }
 
 
-class Favs(db.Model):
+# class Favs(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+#     planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+
+
+#     def to_dict(self):
+#         return {}
+
+#     def __repr__(self):
+#         return '<Favs %r>' % self.id
+
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "person_id": self.person_id,
+#             "character_id": self.character_id,
+#             "planets_id": self.planets_id
+#         }
+class FavsCharacters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
-    planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
 
 
     def to_dict(self):
         return {}
 
     def __repr__(self):
-        return '<Favs %r>' % self.id
+        return '<FavsCharacters %r>' % self.id
 
     def serialize(self):
         return {
             "id": self.id,
             "person_id": self.person_id,
             "character_id": self.character_id,
+        }
+class FavsPlanets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+     
+
+
+    def to_dict(self):
+        return {}
+
+    def __repr__(self):
+        return '<FavsPlanets %r>' % self.id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "person_id": self.person_id,
             "planets_id": self.planets_id
         }
