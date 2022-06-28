@@ -34,6 +34,9 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+# GET USERS
+
 @app.route('/user', methods=['GET'])
 def handle_user():
 
@@ -46,6 +49,52 @@ def handle_user():
     return jsonify(response_body), 200
 
 
+# PLANETS
+
+# CREATE PLANET LIST IN DB
+
+planets = [{"name":"a", "population":"b", "terrain":"h", "climate":"b","orbitalPeriod":"ij","rotationPeriod":"ij", "diameter":"ij"}]
+
+# GET PLANETS 
+
+@app.route('/planets', methods=['GET'])
+def handle_planets():
+
+
+    for planet in planets:
+        newPlanet = Planets(name= planet["name"], population= planet["population"], terrain=planet["terrain"], climate=planet["climate"], orbitalPeriod= planet["orbitalPeriod"], diameter=planet["diameter"])
+        db.session.add(newPlanet)
+        db.session.commit()
+   
+    planeta = Planets.query.all() #le pido info a la tabla User
+    planetsList = list(map(lambda obj: obj.serialize(), planeta)) #mapeo el array para serializarlo
+    print(planetsList)
+
+    response_body = {
+        "results": planetsList
+    }
+
+    return jsonify(response_body)
+
+# GET CHARACTERS
+
+@app.route('/characters', methods=['GET'])
+def handle_characters():
+
+   
+    characters = Characters.query.all() #le pido info a la tabla User
+    characterList = list(map(lambda obj: obj.serialize(),characters))
+
+    print(characters)
+
+    response_body = {
+        "results": characterList
+    }
+
+    return jsonify(response_body)
+
+
+#  GET USER FAVORITES CHARACTERS
 
 @app.route('/user/<int:position>/CharactersFavorites', methods=['GET'])
 def handle_favCharacter(position):
@@ -63,6 +112,8 @@ def handle_favCharacter(position):
 
     return jsonify(response_body), 200
 
+
+#  GET USER FAVORITES PLANETS
 
 @app.route('/user/<int:position>/PlanetsFavorites', methods=['GET'])
 def handle_favPlanet(position):
@@ -82,6 +133,8 @@ def handle_favPlanet(position):
 
     return jsonify(response_body), 200
 
+
+# GET USER  ALL FAVORITES
 
 @app.route('/user/<int:position>/Favorites', methods=['GET'])
 def handle_favs(position):
@@ -108,13 +161,14 @@ def handle_favs(position):
     return jsonify(response_body), 200
 
 
+# POST USER 
 
 @app.route('/user', methods=['POST'])
 def add_new_user():
 
     body = json.loads(request.data)
     
-    user = User(name= body["name"], email=body["email"], password=body["password"], favoritos = body["favoritos"])
+    user = User(name= body["name"], email=body["email"], password=body["password"])
     db.session.add(user)
     db.session.commit()
 
@@ -124,6 +178,8 @@ def add_new_user():
 
     return jsonify(response_body), 200
 
+
+# POST FAVORITE CHARACTER
 
 @app.route('/user/CharactersFavorites/<int:id_character>/', methods=['POST'])
 def add_new_favCharacter(id_character):
@@ -140,6 +196,8 @@ def add_new_favCharacter(id_character):
     return jsonify(response_body), 200
 
 
+# POST FAVORITE PLANET
+
 @app.route('/user/PlanetsFavorites/<int:id_planet>/', methods=['POST'])
 def add_new_favPlanet(id_planet):
 
@@ -154,6 +212,8 @@ def add_new_favPlanet(id_planet):
 
     return jsonify(response_body), 200
 
+
+# DELETE USER
 
 
 @app.route('/user/<int:position>', methods=['DELETE'])
@@ -170,6 +230,8 @@ def delete_user(position):
     return jsonify(response_body), 200
 
 
+# DELETE FAVORITE PLANET
+
 @app.route('/user/<int:id_user>/PlanetsFavorites/<int:id_planet>/', methods=['DELETE'])
 def delete_PlanetsFavorites(id_user,id_planet):
     # body = json.loads(request.data)
@@ -185,47 +247,26 @@ def delete_PlanetsFavorites(id_user,id_planet):
 
     return jsonify(response_body), 200
 
+# DELETE FAVORITE CHARACTER
 
-
-
-
-
-planets = [{"name":"a", "population":"b", "terrain":"h", "climate":"b","orbitalPeriod":"ij","rotationPeriod":"ij", "diameter":"ij","favoritos":"huhu"}]
-
-
-
-@app.route('/planets', methods=['GET'])
-def handle_planets():
-
-
-    for planet in planets:
-        newPlanet = Planets(name= planet["name"], population= planet["population"], terrain=planet["terrain"], climate=planet["climate"], orbitalPeriod= planet["orbitalPeriod"], diameter=planet["diameter"], favoritos = planet["favoritos"])
-        db.session.add(newPlanet)
-        db.session.commit()
-   
-    planeta = Planets.query.all() #le pido info a la tabla User
-
-    # print(planeta)
+@app.route('/user/<int:id_user>/CharactersFavorites/<int:id_character>/', methods=['DELETE'])
+def delete_CharactersFavorites(id_user,id_character):
+    # body = json.loads(request.data)
+    # print(body)
+    character = FavsCharacters.query.filter_by(person_id= id_user, character_id= id_character).first()
+    db.session.delete(character)
+    db.session.commit()
 
     response_body = {
-        "results": "ok"
+        "msg": "user deleted"
     }
 
-    return jsonify(response_body)
+    return jsonify(response_body), 200
 
-@app.route('/characters', methods=['GET'])
-def handle_characters():
 
-   
-    characters = Characters.query.all() #le pido info a la tabla User
 
-    # print(characters)
 
-    response_body = {
-        "results": "ok"
-    }
 
-    return jsonify(response_body)
 
 
 

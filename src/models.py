@@ -80,7 +80,7 @@ class Planets(db.Model):
             "orbitalPeriod": self.orbitalPeriod,
             "rotationPeriod": self.rotationPeriod,
             "diameter": self.diameter,
-            "favoritos": self.favoritos
+            # "favoritos": self.favoritos
         }
 
 
@@ -104,6 +104,9 @@ class Planets(db.Model):
 #             "character_id": self.character_id,
 #             "planets_id": self.planets_id
 #         }
+
+
+
 class FavsCharacters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -122,6 +125,8 @@ class FavsCharacters(db.Model):
             "person_id": self.person_id,
             "character_id": self.character_id,
         }
+
+
 class FavsPlanets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
