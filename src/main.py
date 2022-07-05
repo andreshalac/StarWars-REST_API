@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import requests
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -53,7 +54,13 @@ def handle_user():
 
 # CREATE PLANET LIST IN DB
 
-planets = [{"name":"a", "population":"b", "terrain":"h", "climate":"b","orbitalPeriod":"ij","rotationPeriod":"ij", "diameter":"ij"}]
+# Fetch
+url = 'https://swapi.dev/api/planets'
+response = requests.get(url)
+result = json.loads(response.text)
+planetList = result["results"]
+
+
 
 # GET PLANETS 
 
@@ -61,10 +68,11 @@ planets = [{"name":"a", "population":"b", "terrain":"h", "climate":"b","orbitalP
 def handle_planets():
 
 
-    for planet in planets:
-        newPlanet = Planets(name= planet["name"], population= planet["population"], terrain=planet["terrain"], climate=planet["climate"], orbitalPeriod= planet["orbitalPeriod"], diameter=planet["diameter"])
+    for planet in planetList:
+        newPlanet = Planets(name= planet["name"], population= planet["population"], terrain=planet["terrain"], climate=planet["climate"], orbitalPeriod= planet["orbital_period"], diameter=planet["diameter"])
         db.session.add(newPlanet)
         db.session.commit()
+
    
     planeta = Planets.query.all() #le pido info a la tabla User
     planetsList = list(map(lambda obj: obj.serialize(), planeta)) #mapeo el array para serializarlo
